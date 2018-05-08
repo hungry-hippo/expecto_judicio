@@ -6,4 +6,7 @@ flask-login==0.4.0
 flask-Bcrypt==0.7.1
 flask-SQLAlchemy==2.3.2
 PyMySQL==0.8.0
-click==6.7nltk==3.2.5feedparser=5.2.1
+click==6.7
+nltk==3.2.5
+feedparser==5.2.1
+gunicorn
