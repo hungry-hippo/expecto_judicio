@@ -1,0 +1,204 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='forumstyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap-grid.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap-reboot.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function delid(id)
+        {
+            document.getElementById('id').value = id;
+            document.getElementById('button').click();
+        }
+    </script>
+
+</head>
+<body>
+{% extends 'navbar.html' %}
+{% block body %}
+<div style="padding-top: 70px" class="container">
+    <div class="card mb-5">
+        <div class="card-header display-4 text-center">
+            Legal Access
+        </div>
+        <div class="card-header">
+            <form method="POST">
+                {{ form.csrf_token }}
+                <div class="input-group my-2">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text py-0">{{form.chapno.label}}</span>
+                    </div>
+                    {{ form.chapno(class_="custom-select") }}
+                    <div class="input-group-append">
+                        {{form.submitchap(class_="btn btn-outline-dark py-0")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            {% if addform.errors and addform.add.data %}
+            {% for field, error in addform.errors.items() %}
+            <div class="alert alert-danger" role="alert">
+                {{ error[0] }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if modform.errors and modform.modify.data %}
+            {% for field, error in modform.errors.items() %}
+            <div class="alert alert-danger" role="alert">
+                {{ error[0] }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if laws %}
+            {% for law in laws %}
+            <div class="card text-center rounded-0 my-2 border">
+                <div class="card-header row bg-dark text-light m-0">
+                    <div class="col-4 border-right">
+                        {{ law.sec }}
+                    </div>
+                    <div class="col-8 border-left">
+                        {{ law.chapter }}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row py-2 border-bottom" style="max-height: 100px; overflow: hidden;">
+                        <div class="col-2 border-right">
+                            Law Statement
+                        </div>
+                        <div class="col border-left text-justify" style="margin-right: -17px;overflow-x:  hidden;overflow-y: scroll;">
+                            {{ law.legal }}
+                        </div>
+                    </div>
+                    <div class="row py-2 border-top" style="max-height: 100px; overflow: hidden;">
+                        <div class="col-2 border-right">
+                            Explanation
+                        </div>
+                        <div class="col border-left text-justify" style="margin-right: -17px;overflow-x:  hidden;overflow-y: scroll;">
+                            {{ law.exp }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer row text-muted">
+                    <div class="col-4 border-right">
+                        Added by {{ law.addedby }}
+                    </div>
+                    <div class="col-4 border-left border-right">
+                    {% if not law.modifiedby=='_' %}
+                        Modified by {{ law.modifiedby }}
+                    {% endif %}
+                    </div>
+                    <div class="col-4 row border-left">
+                        {# button to modify law #}
+                        <button type="button" class="btn btn-outline-info col-5 mr-auto" data-toggle="modal"
+                                data-target="#m{{law.id}}Modal">
+                            Modify
+                        </button>
+                        {# modal to modify law #}
+                        <div class="modal fade" id="m{{law.id}}Modal" tabindex="-1" role="dialog"
+                             aria-labelledby="m{{law.id}}ModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered w-75" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="m{{law.id}}ModalLabel">Modify Law</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="POST">
+                                            {{ modform.csrf_token }}
+                                            <div class="input-group mb-3 m-0 row">
+                                                <div class="input-group-prepend col-3 px-0">
+                                                    <span class="input-group-text w-100">{{ modform.chapter.label}}</span>
+                                                </div>
+                                                {{modform.chapter(class_='form-control disabled', value=law.chapter)}}
+                                            </div>
+                                            <div class="input-group mb-3 m-0 row">
+                                                <div class="input-group-prepend col-3 px-0">
+                                                    <span class="input-group-text w-100">{{ modform.sec.label}}</span>
+                                                </div>
+                                                {{modform.sec(class_='form-control disabled', value=law.sec)}}
+                                            </div>
+                                            <div class="input-group mb-3 m-0 row">
+                                                <div class="input-group-prepend col-3 px-0">
+                                                    <span class="input-group-text w-100">Legal<br>Statement</span>
+                                                </div>
+                                                {{modform.legal(rows=5, class_='form-control', value=law.legal)}}
+                                            </div>
+                                            <div class="input-group mb-3 m-0 row">
+                                                <div class="input-group-prepend col-3 px-0">
+                                                    <span class="input-group-text w-100">{{ modform.exp.label}}</span>
+                                                </div>
+                                                {{modform.exp(rows=5, class_='form-control', value=law.exp)}}
+                                            </div>
+                                            {{ modform.modifyid(value=law.id)}}
+                                            {{modform.modify(class_="btn btn-outline-info")}}
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {# button to delete law #}
+                        <button class="btn btn-outline-danger col-5 ml-auto" onclick=delid(id)>Delete</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <h5 class="text-center">Select a Chapter to view related Laws</h5>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <p class="display-4">Add Law</p>
+            <form method="POST">
+                {{ addform.csrf_token }}
+                <div class="input-group mb-3 m-0 row">
+                    <div class="input-group-prepend col-3 px-0">
+                        <span class="input-group-text w-100">{{ addform.chapter.label }}</span>
+                    </div>
+                    {{ addform.chapter(class_="form-control") }}
+                </div>
+                <div class="input-group mb-3 m-0 row">
+                    <div class="input-group-prepend col-3 px-0">
+                        <span class="input-group-text w-100">{{ addform.sec.label }}</span>
+                    </div>
+                    {{ addform.sec(class_="form-control") }}
+                </div>
+                <div class="input-group mb-3 m-0 row">
+                    <div class="input-group-prepend col-3 px-0">
+                        <span class="input-group-text w-100">Legal<br>Statement</span>
+                    </div>
+                    {{ addform.legal(rows=5, class_="form-control") }}
+                </div>
+                <div class="input-group mb-3 m-0 row">
+                    <div class="input-group-prepend col-3 px-0">
+                        <span class="input-group-text w-100">{{ addform.exp.label }}</span>
+                    </div>
+                    {{ addform.exp(rows=5, class_="form-control") }}
+                </div>
+                {{ addform.add(class_="btn btn-outline-info float-right") }}
+
+            </form>
+            {# hidden field to pass delete id #}
+            <form method="POST">
+                {{ delform.crsf_token }}
+                {{ delform.id }}
+                <input id=button type="submit" hidden="true">
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="footer-copyright m-0 py-3 text-center">
+    © 2018 Copyright:
+    <a href="http://23.236.147.19/wiki/index.php?title=PineapplePizza:Main"> PineapplePizza </a>
+</div>
+
+{% endblock %}
+</body>

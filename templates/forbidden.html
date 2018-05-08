@@ -1,0 +1,29 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='homestyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap-grid.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap-reboot.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <style>
+        .footer-copyright{
+            position: absolute;
+        }
+    </style>
+</head>
+{% extends 'navbar.html' %}
+{% block body %}
+<div style="padding-top: 70px" class="container">
+    <div class="card mb-5">
+        <div class="card-header display-4 text-center">
+            {{ msg }}
+        </div>
+    </div>
+</div>
+
+<div class="footer-copyright m-0 py-3 text-center">
+        © 2018 Copyright:
+        <a href="http://23.236.147.19/wiki/index.php?title=PineapplePizza:Main"> PineapplePizza </a>
+</div>
+{% endblock %}

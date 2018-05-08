@@ -1,0 +1,175 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='forumstyle.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap-grid.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='./css/bootstrap-reboot.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function delid(id)
+        {
+            document.getElementById('id').value = id;
+            document.getElementById('button').click();
+        }
+    </script>
+    <style>
+        .footer-copyright {
+            position: fixed;
+        }
+    </style>
+</head>
+<body>
+{% extends 'navbar.html' %}
+{% block body %}
+<div style="padding-top: 70px" class="container">
+    <div class="card mb-5">
+        <div class="card-header text-center">
+            <div class="card rounded-0">
+                <div class="card-body">
+                    {% if modform.errors and modform.commentmod.data %}
+                    {% for field, error in modform.errors.items() %}
+                    <div class="alert alert-danger w-100 text-center" role="alert">
+                        {{ error[0] }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    <h4 style="font-weight: normal;border-bottom: 1px solid rgba(0,0,0,0.4) !important"
+                        class="card-subtitle mb-2 pb-2">
+                        {{ heading.heading }}
+                    </h4>
+                    <p class="card-text text-left">{{ heading.text }}</p>
+                </div>
+                <div class="card-footer row text-muted" style="text-decoration: none">
+                    <p class="col-4 text-left mb-0">Posted by {{ heading.username }}
+                        {% if heading.usertype==3 %}
+                        <span class="badge badge-danger">Admin</span>
+                        {% elif heading.usertype==2 %}
+                        <span class="badge badge-info">Legal</span>
+                        {% endif %}
+                    </p>
+                    {% if user.username==heading.username %}
+                    <div class="col">
+                        <button class="btn btn-outline-info float-right" type="button"
+                                data-toggle="collapse" data-target="#m{{ heading.id }}"
+                                aria-expanded="false" aria-controls="m{{ heading.id }}">
+                            Modify
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="collapse" id="m{{ heading.id }}">
+                    <div class="card card-body">
+                        <form method="POST">
+                            {{ modform.csrf_token }}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">{{ user.username }}</span>
+                                </div>
+                                {{modform.modifytext(class_='form-control', value=heading.text)}}
+                                <div class="input-group-append">
+                                    {{ modform.commentmod(class_="btn btn-outline-secondary") }}
+                                </div>
+                            </div>
+                            {{ modform.modifyid(value=heading.id)}}
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            {% for dat in data %}
+            <div class="card rounded-0 my-3">
+                <div class="card-header row bg-dark text-light">
+                    <div class="col-9">
+                        <p class="card-text">{{ dat.text }}</p>
+                    </div>
+                    <div class="col-3 row justify-content-end">
+                        {% if user.username==dat.username %}
+                        {# button to modify comment #}
+                        <span>
+                            <button class="mr-3 btn btn-outline-primary" type="button"
+                                    data-toggle="collapse" data-target="#m{{ dat.id }}"
+                                    aria-expanded="false" aria-controls="{{ dat.id }}">
+                            Modify
+                            </button>
+                        </span>
+                        {% endif %}
+
+                        {% if user.usertype==3 or user.username==dat.username %}
+                        {# button to delete comment #}
+                        <span>
+                            <button class="btn btn-outline-danger" id={{ dat.id }} onclick=delid(id)>Delete</button>
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="collapse" id="m{{ dat.id }}">
+                    <div class="card card-body">
+                        <form method="POST">
+                            {{ modform.csrf_token }}
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">{{ user.username }}</span>
+                                </div>
+                                {{modform.modifytext(class_='form-control', value=dat.text)}}
+                                <div class="input-group-append">
+                                    {{ modform.commentmod(class_="btn btn-outline-secondary") }}
+                                </div>
+                            </div>
+                            {{ modform.modifyid(value=dat.id)}}
+
+                        </form>
+                    </div>
+                </div>
+                <a class="card-footer row text-muted" style="text-decoration: none" href="/forum/{{ dat.id }}">
+                    <p class="col text-right mb-0">Posted by {{ dat.username }}
+                        {% if dat.usertype==3 %}
+                        <span class="badge badge-danger">Admin</span>
+                        {% elif dat.usertype==2 %}
+                        <span class="badge badge-info">Legal</span>
+                        {% endif %}
+                    </p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="card-footer">
+            {# Comment Box #}
+            {% if user.is_authenticated %}
+            <form method="POST">
+                {{ form.csrf_token }}
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">{{ user.username }}</span>
+                    </div>
+                    {{ form.text(class_="form-control", placeholder="Comments") }}
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-dark" type="submit">Reply</button>
+                    </div>
+                </div>
+                {% if form.errors %}
+                {% for field, error in form.errors.items() %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error[0] }}
+                </div>
+                {% endfor %}
+                {% endif %}
+            </form>
+            {% endif %}
+
+            <form method="POST">
+                {{ delform.id }}
+                <input id=button type="submit" hidden="true">
+            </form>
+        </div>
+    </div>
+
+</div>
+<div class="footer-copyright m-0 py-3 text-center">
+    © 2018 Copyright:
+    <a href="http://23.236.147.19/wiki/index.php?title=PineapplePizza:Main"> PineapplePizza </a>
+</div>
+{%endblock%}
+</body>
