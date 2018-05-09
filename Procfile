@@ -1,1 +1,1 @@
-web: waitress-serve --port=$PORT expecto_judicio.__init__:application 
+web: waitress-serve --port=$PORT expecto_judicio:application 
