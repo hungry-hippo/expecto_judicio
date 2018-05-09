@@ -31,7 +31,7 @@ class User(db.Model, UserMixin):
 
     @staticmethod
     def hash_password(password):
-        return bcrypt_.generate_password_hash(sha512(str(password)).hexdigest())
+        return bcrypt_.generate_password_hash(sha512(str(password).encode('utf-8')).hexdigest())
 
     # called to add user
     def add_user(self):
