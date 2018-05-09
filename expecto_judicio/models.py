@@ -27,7 +27,7 @@ class User(db.Model, UserMixin):
         self.usertype = utype
 	
     def validate_password(self, password):
-        return bcrypt_.check_password_hash(self.password, sha512(str(password.encode('utf-8'))).hexdigest())
+        return bcrypt_.check_password_hash(self.password, sha512(str(password).encode('utf-8')).hexdigest())
 
     @staticmethod
     def hash_password(password):
