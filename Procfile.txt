@@ -1,1 +1,1 @@
-web: waitress-serve --port=5000 app:wsgifunc
+web: gunicorn expecto_judicio:app --log-file -
