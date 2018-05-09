@@ -7,7 +7,7 @@ _database_settings = {
     'password': '',
     'database': 'mydb',
     # http://docs.sqlalchemy.org/en/latest/dialects/mysql.html#unicode
-
+	'encoding': 'utf8mb4'
 }
 
 SECRET_KEY = 'asdfasdfasdf'  # generate with os.urandom(32), used for session keys and such
