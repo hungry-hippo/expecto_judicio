@@ -1,1 +1,1 @@
-"web: gunicorn expecto_judicio:app --log-file -"
+web: gunicorn expecto_judicio:app --log-file - 
