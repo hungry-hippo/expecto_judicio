@@ -1,1 +1,1 @@
-web: waitress-serve --port=5000 expecto_judicio:app 
+web: waitress-serve expecto_judicio:app 
